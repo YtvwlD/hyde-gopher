@@ -11,7 +11,6 @@ app = Flask(__name__)
 gopher = GopherExtension(app)
 
 
-@app.route('/')
 def index():
     entries = [
         gopher.menu.dir(entry.name, entry.url)
@@ -22,11 +21,14 @@ def index():
     return gopher.render_menu(*entries)
 
 
-@app.route('/<path:file>.html')
-def post(file):
-    class Resource:
-        relative_path = file + ".html"
-    html = templates.render_resource(Resource(), site.context)
+def handle_node(node):
+    if node.url == '/':
+        return index()
+    raise NotImplementedError
+
+
+def handle_resource(resource):
+    html = templates.render_resource(resource, site.context)
     soup = BeautifulSoup(html)
     entries = list()
     for line in soup.text.splitlines():
@@ -48,4 +50,20 @@ def run():
     site = load_hyde_config(environ["SITE_PATH"])
     templates = Template.find_template(site)
     templates.configure(site)
+    stack = list()
+    site.content.load()
+    stack.append(site.content)
+    while stack:
+        current = stack.pop()
+        app.add_url_rule(
+            current.url, current.relative_path,
+            lambda c=current: handle_node(c)
+        )
+        for child in current.resources:
+            app.add_url_rule(
+                child.url, child.relative_path,
+                lambda c=child: handle_resource(c)
+            )
+        for child in current.child_nodes:
+            stack.append(child)
     app.run('::', 7070, request_handler=GopherRequestHandler)
