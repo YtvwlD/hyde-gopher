@@ -22,7 +22,7 @@ def index():
     return gopher.render_menu(*entries)
 
 
-@app.route('/<file>.html')
+@app.route('/<path:file>.html')
 def post(file):
     class Resource:
         relative_path = file + ".html"
