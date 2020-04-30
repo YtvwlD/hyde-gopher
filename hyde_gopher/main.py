@@ -29,7 +29,11 @@ def post(file):
     soup = BeautifulSoup(html)
     entries = list()
     for line in soup.text.splitlines():
-        entries.append(line)
+        while len(line) >= 70:
+            entries.append(line[:70])
+            line = line[70:]
+        else:
+            entries.append(line)
     return gopher.render_menu(*entries)
 
 
