@@ -1,0 +1,3 @@
+*.pyc
+hyde_gopher.egg-info/
+.mypy_cache/
