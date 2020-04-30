@@ -61,6 +61,8 @@ def run():
     site = load_hyde_config(environ["SITE_PATH"])
     templates = Template.find_template(site)
     templates.configure(site)
+    macros = templates.loader.load(templates.env, "macros.j2")
+    templates.env.globals.update(macros.module.__dict__)
     stack = list()
     site.content.load()
     stack.append(site.content)
