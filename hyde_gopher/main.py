@@ -1,5 +1,7 @@
+from bs4 import BeautifulSoup
 from flask import Flask, url_for
 from flask_gopher import GopherExtension, GopherRequestHandler
+from jinja2 import ChoiceLoader, Environment, FileSystemLoader, FunctionLoader
 from hyde.model import Config
 from hyde.site import Site
 from os import environ
@@ -20,12 +22,28 @@ def index():
     return gopher.render_menu(*entries)
 
 
+@app.route('/<file>.html')
+def post(file):
+    template = environment.get_template(file + ".html")
+    html = template.render()  # TODO: site=?
+    soup = BeautifulSoup(html)
+    entries = list()
+    for line in soup.text.splitlines():
+        entries.append(line)
+    return gopher.render_menu(*entries)
+
+
 def load_hyde_config(sitepath):
     config = Config(sitepath, config_file="site.yaml")
     return Site(sitepath, config)
 
 
 def run():
-    global site
+    global site, environment
     site = load_hyde_config(environ["SITE_PATH"])
+    environment = Environment(loader=ChoiceLoader([
+            FileSystemLoader(str(site.content)),
+            # don't fail if a template does not exist
+            FunctionLoader(lambda name: ("", "/dev/null", True)),
+    ]))
     app.run('::', 7070, request_handler=GopherRequestHandler)
