@@ -74,7 +74,7 @@ setup(
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed.
-    install_requires=['flask', 'flask-gopher'],
+    install_requires=['flask', 'flask-gopher', 'hyde'],  # needs hyde 0.9.0
 
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
