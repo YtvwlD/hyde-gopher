@@ -11,7 +11,7 @@ from commando import (
 from commando.util import getLoggerWithConsoleHandler
 from hyde.model import Config
 from hyde.site import Site
-from . import server
+from . import generator, server
 from . import _version
 
 
@@ -41,6 +41,23 @@ class Engine(Application):
             self.raise_exceptions = args.raise_exceptions
         return Path(args.sitepath).absolute()
     
+    @subcommand('gen', help='Generate the site')
+    @store('-c', '--config-path', default='site.yaml', dest='config',
+           help='The configuration used to generate the site')
+    @store('-d', '--deploy-path', dest='deploy', default=None,
+           help='Where should the site be generated?')
+    # always regen
+    def gen(self, args):
+        """
+        The generate command. Generates the site at the given
+        deployment directory.
+        """
+        sitepath = self.main(args)
+        site = self.make_site(sitepath, args.config, args.deploy)
+        self.logger.info("Regenerating the site...")
+        generator.generate_all(site)
+        self.logger.info("Generation complete.")
+    
     @subcommand('serve', help='Serve the website')
     @store('-a', '--address', default='localhost', dest='address',
            help='The address where the website must be served from.')
@@ -56,12 +73,12 @@ class Engine(Application):
         """
         sitepath = self.main(args)
         site = self.make_site(sitepath, args.config)
-        server.site = site
-        server.serve(args.address, args.port)
+        server.serve(site, args.address, args.port)
 
-    def make_site(self, sitepath, config):
+    def make_site(self, sitepath, config, deploy=None):
         """
         Creates a site object from the given sitepath and the config file.
         """
         config = Config(sitepath, config_file=config)
+        config.deploy_root = deploy or Path(sitepath) / "deploy_gopher"
         return Site(sitepath, config)
