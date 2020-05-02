@@ -78,6 +78,7 @@ setup(
         'flask',
         'flask-gopher',
         'hyde',  # needs hyde 0.9.0
+        'commando',
         'beautifulsoup4'
     ],
 

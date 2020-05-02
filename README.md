@@ -1,5 +1,10 @@
 # hyde-gopher
 
+## Installation
+
+Install the package via `python3 setup.py install` or replace `hyde-gopher`
+with `python3 -m hyde_gopher.main` in the following steps.
+
 ## Usage
 
-Set `SITE_PATH` to the site path.
+`hyde-gopher serve` (also see `-h`)
