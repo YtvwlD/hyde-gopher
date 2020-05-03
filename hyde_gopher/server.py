@@ -9,6 +9,7 @@ def serve(site, address, port):
     gopher = GopherExtension(app)
     generator.gopher = gopher
     generator.gopher_menu = lambda: gopher.menu
+    site.config.base_path = "/"
     templates = Template.find_template(site)
     templates.configure(site)
     macros = templates.loader.load(templates.env, "macros.j2")
