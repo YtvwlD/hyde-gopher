@@ -51,7 +51,7 @@ def generate_node(site, node):
     folder = Path(site.config.deploy_root) / node.relative_path
     if not folder.exists():
         folder.mkdir()
-    (folder / "index.gopher").write_text(content)
+    (folder / "gophermap").write_text(content)
     return content
 
 
