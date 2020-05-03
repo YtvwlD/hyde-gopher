@@ -65,6 +65,8 @@ class Engine(Application):
            help='The port where the website must be served from.')
     @store('-c', '--config-path', default='site.yaml', dest='config',
            help='The configuration used to generate the site')
+    @store('-d', '--deploy-path', dest='deploy', default=None,
+           help='Where should the site be generated?')
     def serve(self, args):
         """
         The serve command. Serves the site at the given
@@ -72,7 +74,7 @@ class Engine(Application):
         the entire site or specific files based on the request.
         """
         sitepath = self.main(args)
-        site = self.make_site(sitepath, args.config)
+        site = self.make_site(sitepath, args.config, args.deploy)
         server.serve(site, args.address, args.port)
 
     def make_site(self, sitepath, config, deploy=None):
