@@ -1,0 +1,17 @@
+language: python
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
+  - "3.9"
+# command to install dependencies
+install:
+  - pip install git+https://github.com/hyde/hyde.git@V0.9.0
+  - pip install .
+# command to run tests
+script:
+  - cd $(mktemp -d)
+  - hyde create
+  - hyde gen
+  - echo "gopher_base_url: gopher://localhost:7070/" >> site.yaml
+  - hyde-gopher gen
