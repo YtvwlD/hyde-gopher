@@ -13,5 +13,5 @@ script:
   - cd $(mktemp -d)
   - hyde create
   - hyde gen
-  - echo "gopher_base_url: gopher://localhost:7070/" >> site.yaml
+  - "echo 'gopher_base_url: gopher://localhost:7070/' >> site.yaml"
   - hyde-gopher gen
