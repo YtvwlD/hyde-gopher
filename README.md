@@ -8,8 +8,24 @@ Serve your [Hyde](https://hyde.github.io/) site over
 
 ## Installation
 
-Install the package via `python3 -m pip install .` or replace `hyde-gopher`
-with `python3 -m hyde_gopher.main` in the following steps.
+### From source
+
+If you cloned or downloaded the repository, you can install the package with:
+
+```shell
+python3 -m pip install .
+```
+
+If you don't want to install anything, you can replace `hyde-gopher` with
+`python3 -m hyde_gopher.main` in the following steps.
+
+### Release
+
+You can install the latest relase from PyPI by running
+
+```shell
+python3 -m pip install hyde-gopher
+```
 
 ## Usage
 
@@ -36,7 +52,7 @@ To do so, run `hyde-gopher serve`.
 
 Per default, this will serve the site from the current working directory
 at <gopher://localhost:7070/>, placing generated files into `deploy_gopher/`.
-(You can change this, see `hyde-gopher -h` and `hyde-goper serve -h` for more options.)
+(You can change this, see `hyde-gopher -h` and `hyde-gopher serve -h` for more options.)
 
 ### Generate
 
@@ -46,10 +62,21 @@ To do so, run `hyde-gopher gen`.
 
 Per default, this will generate a static version of the site from the current
 working directory to the folder `deploy_gopher/`.
-(You can change this, see `hyde-gopher -h` and `hyde-goper gen -h` for more options.)
+(You can change this, see `hyde-gopher -h` and `hyde-gopher gen -h` for more options.)
 
 ## Knonwn issues / TODO
 
  * index pages look very meager
  * links in pages are not rendered as links
  * just HTML files and folders are considered
+
+## Gotchas
+
+hyde-gopher needs Python >= 3.6.
+
+The currenty stable release of hyde (0.8.9) needs Python < 3.
+You'll need to install the pre-release of hyde 0.9.0 to get this working:
+
+```shell
+python3 -m pip install git+https://github.com/hyde/hyde.git@V0.9.0
+```
