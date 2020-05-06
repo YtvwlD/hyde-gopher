@@ -1,7 +1,5 @@
 from flask import Flask
 from flask_gopher import GopherExtension, GopherRequestHandler
-from hyde.plugin import Plugin
-from hyde.template import Template
 from . import generator
 
 
@@ -11,25 +9,9 @@ def serve(site, address, port):
     generator.gopher = gopher
     generator.gopher_menu = lambda: gopher.menu
     site.config.base_path = "/"
-    plugins = Plugin(site)
-    plugins.load_all(site)
-    events = Plugin.get_proxy(site)
-    generator_proxy = generator.GeneratorProxy(
-        context_for_path=None,
-        preprocessor=events.begin_text_resource,
-        postprocessor=events.text_resource_complete,
-    )
-    templates = Template.find_template(site)
-    templates.configure(site)
-    templates.configure(site, engine=generator_proxy)
-    events.template_loaded(templates)
-    macros = templates.loader.load(templates.env, "macros.j2")
-    templates.env.globals.update(macros.module.__dict__)
+    events, templates = generator.initialize(site)
     stack = list()
-    site.content.load()
     stack.append(site.content)
-    events.begin_generation()
-    events.begin_site()
     while stack:
         current = stack.pop()
         app.add_url_rule(

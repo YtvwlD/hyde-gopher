@@ -88,11 +88,7 @@ GeneratorProxy = namedtuple(
 )
 
 
-def generate_all(site):
-    global gopher_menu
-    base_url = urlparse(site.config.gopher_base_url)
-    site.config.base_path = base_url.path
-    gopher_menu = lambda: GopherMenu(base_url.hostname, base_url.port or 70)
+def initialize(site):
     plugins = Plugin(site)
     plugins.load_all(site)
     events = Plugin.get_proxy(site)
@@ -106,11 +102,20 @@ def generate_all(site):
     events.template_loaded(templates)
     macros = templates.loader.load(templates.env, "macros.j2")
     templates.env.globals.update(macros.module.__dict__)
-    stack = list()
     site.content.load()
-    stack.append(site.content)
     events.begin_generation()
     events.begin_site()
+    return events, templates
+
+
+def generate_all(site):
+    global gopher_menu
+    base_url = urlparse(site.config.gopher_base_url)
+    site.config.base_path = base_url.path
+    gopher_menu = lambda: GopherMenu(base_url.hostname, base_url.port or 70)
+    events, templates = initialize(site)
+    stack = list()
+    stack.append(site.content)
     while stack:
         current = stack.pop()
         if current.name == "tags":
