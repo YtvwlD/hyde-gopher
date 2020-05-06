@@ -83,4 +83,9 @@ class Engine(Application):
         """
         config = Config(sitepath, config_file=config)
         config.deploy_root = deploy or Path(sitepath) / "deploy_gopher"
-        return Site(sitepath, config)
+        site = Site(sitepath, config)
+        site.context['site'] = site
+        site.config.layout_root = getattr(
+            site.config, "gopher_layout_root", "layout_gopher"
+        )
+        return site

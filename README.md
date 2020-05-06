@@ -69,6 +69,7 @@ working directory to the folder `deploy_gopher/`.
  * index pages look very meager
  * links in pages are not rendered as links
  * just HTML files and folders are considered
+ * `layout_gopher` is expected to exist, but neither generated nor included here
 
 ## Gotchas
 

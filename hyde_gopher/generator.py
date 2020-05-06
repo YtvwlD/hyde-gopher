@@ -1,8 +1,10 @@
+from collections import namedtuple
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 from commando.util import getLoggerWithConsoleHandler
 from bs4 import BeautifulSoup
 from flask_gopher import GopherMenu, GopherExtension
+from hyde.plugin import Plugin
 from hyde.template import Template
 from . import _version
 
@@ -25,8 +27,9 @@ def index(site):
     return gopher.render_menu(*entries)
 
 
-def generate_node(site, node):
+def generate_node(site, events, node):
     logger.debug(f"Generating for {node.relative_path}...")
+    events.begin_node(node)
     if node.url == '/':
         content = index(site)
     else:
@@ -52,16 +55,18 @@ def generate_node(site, node):
     if not folder.exists():
         folder.mkdir()
     (folder / "gophermap").write_text(content)
+    events.node_complete(node)
     return content
 
 
-def generate_resource(site, templates, resource):
+def generate_resource(site, events, templates, resource):
     if not resource.name.endswith(".html"):
         return gopher.render_menu(
             gopher_menu().info("Not yet supported, sorry.")
         )  # TODO
     logger.debug(f"Generating for {resource.relative_path}...")
     html = templates.render_resource(resource, site.context)
+    # TODO: also support plain text
     soup = BeautifulSoup(html)
     entries = list()
     for line in soup.text.splitlines():
@@ -77,24 +82,43 @@ def generate_resource(site, templates, resource):
     return content
 
 
+GeneratorProxy = namedtuple(
+    "GeneratorProxy",
+    ["preprocessor", "postprocessor", "context_for_path"]
+)
+
+
 def generate_all(site):
     global gopher_menu
     base_url = urlparse(site.config.gopher_base_url)
     site.config.base_path = base_url.path
     gopher_menu = lambda: GopherMenu(base_url.hostname, base_url.port or 70)
+    plugins = Plugin(site)
+    plugins.load_all(site)
+    events = Plugin.get_proxy(site)
+    generator_proxy = GeneratorProxy(
+        context_for_path=None,
+        preprocessor=events.begin_text_resource,
+        postprocessor=events.text_resource_complete,
+    )
     templates = Template.find_template(site)
-    templates.configure(site)
+    templates.configure(site, engine=generator_proxy)
+    events.template_loaded(templates)
     macros = templates.loader.load(templates.env, "macros.j2")
     templates.env.globals.update(macros.module.__dict__)
     stack = list()
     site.content.load()
     stack.append(site.content)
+    events.begin_generation()
+    events.begin_site()
     while stack:
         current = stack.pop()
         if current.name == "tags":
             continue  # TODO
-        generate_node(site, current)
+        generate_node(site, events, current)
         for child in current.resources:
-            generate_resource(site, templates, child)
+            generate_resource(site, events, templates, child)
         for child in current.child_nodes:
             stack.append(child)
+    events.site_complete()
+    events.generation_complete()
