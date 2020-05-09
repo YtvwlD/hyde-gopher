@@ -100,8 +100,6 @@ def initialize(site):
     templates = Template.find_template(site)
     templates.configure(site, engine=generator_proxy)
     events.template_loaded(templates)
-    macros = templates.loader.load(templates.env, "macros.j2")
-    templates.env.globals.update(macros.module.__dict__)
     site.content.load()
     events.begin_generation()
     events.begin_site()
