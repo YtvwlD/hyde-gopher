@@ -34,8 +34,27 @@ class Generator:
         self.templates.configure(self.site, engine=generator_proxy)
         self.events.template_loaded(self.templates)
         self.site.content.load()
+        self.templates.env.globals.update(self.site.config.context.data)
         self.events.begin_generation()
         self.events.begin_site()
+    
+    def _add_gopher_stuff_to_templates(self):
+        class FakeApp:
+            """This is a fake class to proxy _add_gopher_jinja_methods to Hyde."""
+            
+            def __init__(self, templates):
+                self.jinja_env = templates.env
+            
+            def add_template_filter(self, method, name):
+                self.jinja_env.filters[name] = method
+            
+            def context_processor(self, method):
+                pass
+        self.gopher._add_gopher_jinja_methods(FakeApp(self.templates))
+        self.templates.env.globals["gopher"] = self.gopher
+        self.templates.env.globals["gopher_menu"] = self.gopher_menu
+        assert self.templates.env.globals["gopher_menu"] is not None
+        self.templates.env.globals["tabulate"] = self.gopher.formatter.tabulate
 
     def index(self):
         entries = [
@@ -85,6 +104,8 @@ class Generator:
                 self.gopher_menu.info("Not yet supported, sorry.")
             )  # TODO
         logger.debug(f"Generating for {resource.relative_path}...")
+        # Do this here, because gopher_menu depends on the current request.
+        self._add_gopher_stuff_to_templates()
         html = self.templates.render_resource(resource, self.site.context)
         # TODO: also support plain text
         soup = BeautifulSoup(html)
@@ -112,7 +133,9 @@ def generate_all(site):
     base_url = urlparse(site.config.gopher_base_url)
     site.config.base_path = base_url.path
     gopher = GopherExtension()
+    # fake gopher.init_app()
     gopher.width = 70
+    gopher.formatter = gopher.formatter_class()
     gopher_menu = GopherMenu(base_url.hostname, base_url.port or 70)
     generator = Generator(site, gopher, gopher_menu)
     stack = list()
