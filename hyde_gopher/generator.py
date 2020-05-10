@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import datetime
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 from commando.util import getLoggerWithConsoleHandler
@@ -118,7 +119,14 @@ class Generator:
         logger.debug(f"Generating for {resource.relative_path}...")
         # Do this here, because gopher_menu depends on the current request.
         self._add_gopher_stuff_to_templates()
-        rendered = self.templates.render_resource(resource, site.context)
+        current_context = self.site.context.copy()
+        current_context.update(
+            # based on Hyde's generator.context_for_resource
+            resource=resource,
+            node=resource.node,
+            time_now=datetime.now()
+        )
+        rendered = self.templates.render_resource(resource, current_context)
         entries = [
             line if line.count("\t") == 3 else self.gopher_menu.info(line)
             for line in rendered.splitlines()
