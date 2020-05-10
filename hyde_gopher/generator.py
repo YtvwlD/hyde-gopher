@@ -38,6 +38,17 @@ class Generator:
         self.events.begin_generation()
         self.events.begin_site()
     
+    def html2gopher(self, html):
+        soup = BeautifulSoup(html)
+        entries = list()
+        for line in soup.text.splitlines():
+            while len(line) >= 70:
+                entries.append(self.gopher_menu.info(line[:70]))
+                line = line[70:]
+            else:
+                entries.append(self.gopher_menu.info(line))
+        return "\n".join(entries)
+    
     def _add_gopher_stuff_to_templates(self):
         class FakeApp:
             """This is a fake class to proxy _add_gopher_jinja_methods to Hyde."""
@@ -55,6 +66,7 @@ class Generator:
         self.templates.env.globals["gopher_menu"] = self.gopher_menu
         assert self.templates.env.globals["gopher_menu"] is not None
         self.templates.env.globals["tabulate"] = self.gopher.formatter.tabulate
+        self.templates.env.filters["html2gopher"] = self.html2gopher
 
     def index(self):
         entries = [
@@ -106,16 +118,11 @@ class Generator:
         logger.debug(f"Generating for {resource.relative_path}...")
         # Do this here, because gopher_menu depends on the current request.
         self._add_gopher_stuff_to_templates()
-        html = self.templates.render_resource(resource, self.site.context)
-        # TODO: also support plain text
-        soup = BeautifulSoup(html)
-        entries = list()
-        for line in soup.text.splitlines():
-            while len(line) >= 70:
-                entries.append(self.gopher_menu.info(line[:70]))
-                line = line[70:]
-            else:
-                entries.append(self.gopher_menu.info(line))
+        rendered = self.templates.render_resource(resource, site.context)
+        entries = [
+            line if line.count("\t") == 3 else self.gopher_menu.info(line)
+            for line in rendered.splitlines()
+        ]
         content = self.gopher.render_menu(*entries)
         (
             Path(self.site.config.deploy_root) / resource.relative_path
