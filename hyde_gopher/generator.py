@@ -155,8 +155,6 @@ def generate_all(site):
     stack.append(site.content)
     while stack:
         current = stack.pop()
-        if current.name == "tags":
-            continue  # TODO
         generator.generate_node(current)
         for child in current.resources:
             generator.generate_resource(child)
