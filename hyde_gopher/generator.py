@@ -109,6 +109,15 @@ class Generator:
         return content
 
     def generate_resource(self, resource):
+        if resource.source_file.is_binary:
+            # if it's a binary, simple copy and return it
+            content = Path(
+                resource.source_file.fully_expanded_path
+            ).read_bytes()
+            (
+                Path(self.site.config.deploy_root) / resource.relative_path
+            ).write_bytes(content)
+            return content
         if not resource.name.endswith(".html"):
             return self.gopher.render_menu(
                 self.gopher_menu.info("Not yet supported, sorry.")
