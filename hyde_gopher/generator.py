@@ -2,12 +2,15 @@ from collections import namedtuple
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
+import re
 from commando.util import getLoggerWithConsoleHandler
 from bs4 import BeautifulSoup
 from flask_gopher import GopherMenu, GopherExtension
 from hyde.plugin import Plugin
 from hyde.template import Template
 from . import _version
+
+MENU_LINE_PATTERN = re.compile('^.+\t.*\t.*\t.*$')  # taken from flask-gopher
 
 logger = getLoggerWithConsoleHandler(__name__)
 
@@ -43,7 +46,8 @@ class Generator:
         soup = BeautifulSoup(html)
         entries = list()
         for line in soup.text.splitlines():
-            if line.count("\t") == 3:  # is it already a valid Gopher line?
+            if MENU_LINE_PATTERN.match(line):
+                # it is already a valid menu line, so just copy it
                 entries.append(line)
                 continue
             while len(line) >= self.gopher.width:
@@ -134,7 +138,9 @@ class Generator:
         )
         rendered = self.templates.render_resource(resource, current_context)
         entries = [
-            line if line.count("\t") == 3 else self.gopher_menu.info(line)
+            line
+            if MENU_LINE_PATTERN.match(line)
+            else self.gopher_menu.info(line)
             for line in rendered.splitlines()
         ]
         content = self.gopher.render_menu(*entries)
