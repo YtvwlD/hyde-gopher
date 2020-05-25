@@ -46,9 +46,9 @@ class Generator:
             if line.count("\t") == 3:  # is it already a valid Gopher line?
                 entries.append(line)
                 continue
-            while len(line) >= 70:
-                entries.append(self.gopher_menu.info(line[:70]))
-                line = line[70:]
+            while len(line) >= self.gopher.width:
+                entries.append(self.gopher_menu.info(line[:self.gopher.width]))
+                line = line[self.gopher.width:]
             else:
                 entries.append(self.gopher_menu.info(line))
         return "\n".join(entries)
