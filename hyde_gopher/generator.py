@@ -43,6 +43,9 @@ class Generator:
         soup = BeautifulSoup(html)
         entries = list()
         for line in soup.text.splitlines():
+            if line.count("\t") == 3:  # is it already a valid Gopher line?
+                entries.append(line)
+                continue
             while len(line) >= 70:
                 entries.append(self.gopher_menu.info(line[:70]))
                 line = line[70:]
