@@ -4,17 +4,23 @@
 # Always prefer setuptools over distutils
 from setuptools import setup
 from os import path
-here = path.abspath(path.dirname(__file__))
-
 from hyde_gopher import _version
 
+here = path.abspath(path.dirname(__file__))
+
+
 # taken from https://stackoverflow.com/a/23265673/2192464
-try:
-    from pypandoc import convert
-    read_md = lambda f: convert(f, 'rst')
-except ImportError:
-    print("warning: pypandoc module not found, could not convert Markdown to RST")
-    read_md = lambda f: open(f, 'r').read()
+def read_md(file):
+    try:
+        from pypandoc import convert
+        return convert(file, 'rst')
+    except ImportError:
+        print(
+            "warning: pypandoc module not found, "
+            "could not convert Markdown to RST"
+        )
+        return open(file, 'r').read()
+
 
 setup(
     name='hyde-gopher',

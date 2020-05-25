@@ -2,6 +2,7 @@ from flask import Flask
 from flask_gopher import GopherExtension, GopherRequestHandler
 from .generator import Generator
 
+
 class MenuProxy:
     """
     Proxies requests to gopher.menu.
