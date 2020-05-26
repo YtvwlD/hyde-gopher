@@ -70,10 +70,10 @@ working directory to the folder `deploy_gopher/`.
 
 ## Knonwn issues / TODO
 
- * index pages look very meager
  * links in pages are not rendered as links
- * just HTML files and folders are considered
- * the layout folder is expected to exist, but neither generated nor included here
+ * images are only linked if you use a macro to render them
+ * just HTML files, binaries and folders are considered
+ * the layout folder is expected to exist, you can use the provided one
 
 ## Gotchas
 
