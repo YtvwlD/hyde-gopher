@@ -70,6 +70,9 @@ setup(
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=['hyde_gopher'],
+    package_data={
+        'hyde_gopher': ['layout_gopher/*'],
+    },
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed.
