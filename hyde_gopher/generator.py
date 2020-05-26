@@ -57,6 +57,10 @@ class Generator:
                 entries.append(self.gopher_menu.info(line))
         return "\n".join(entries)
     
+    def md2gopher(self, md):
+        # TODO: do something useful here
+        return self.html2gopher(md)
+    
     def _add_gopher_stuff_to_templates(self):
         class FakeApp:
             """
@@ -77,6 +81,7 @@ class Generator:
         assert self.templates.env.globals["gopher_menu"] is not None
         self.templates.env.globals["tabulate"] = self.gopher.formatter.tabulate
         self.templates.env.filters["html2gopher"] = self.html2gopher
+        self.templates.env.filters["md2gopher"] = self.md2gopher
 
     def generate_node(self, node):
         logger.debug(f"Generating for {node.relative_path}...")
