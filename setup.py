@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-# partly taken from https://github.com/pypa/sampleproject/blob/02130aeda025ca86975258f953b5d2531d74e94c/setup.py
+# partly taken from https://github.com/pypa/sampleproject/blob/master/setup.py
 
 # Always prefer setuptools over distutils
 from setuptools import setup
@@ -7,19 +7,8 @@ from os import path
 from hyde_gopher import _version
 
 here = path.abspath(path.dirname(__file__))
-
-
-# taken from https://stackoverflow.com/a/23265673/2192464
-def read_md(file):
-    try:
-        from pypandoc import convert
-        return convert(file, 'rst')
-    except ImportError:
-        print(
-            "warning: pypandoc module not found, "
-            "could not convert Markdown to RST"
-        )
-        return open(file, 'r').read()
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 
 setup(
@@ -29,7 +18,8 @@ setup(
     version=_version,
 
     description='a gopher server for Hyde sites',
-    long_description=read_md(path.join(here, 'README.md')),
+    long_description=long_description,
+    long_description_content_type='text/markdown',
 
     # The project's main homepage.
     url='https://github.com/YtvwlD/hyde-gopher',
