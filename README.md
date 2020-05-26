@@ -8,17 +8,6 @@ Serve your [Hyde](https://hyde.github.io/) site over
 
 ## Installation
 
-### From source
-
-If you cloned or downloaded the repository, you can install the package with:
-
-```shell
-python3 -m pip install .
-```
-
-If you don't want to install anything, you can replace `hyde-gopher` with
-`python3 -m hyde_gopher.main` in the following steps.
-
 ### Release
 
 You can install the latest relase from PyPI by running
@@ -26,6 +15,18 @@ You can install the latest relase from PyPI by running
 ```shell
 python3 -m pip install hyde-gopher
 ```
+
+### From source
+
+If you want to use the latest development snapshot (which may be broken),
+you'll need to clone or download the repository and then install the package with:
+
+```shell
+python3 -m pip install .
+```
+
+If you don't want to install anything, you can replace `hyde-gopher` with
+`python3 -m hyde_gopher.main` in the following steps.
 
 ## Usage
 
