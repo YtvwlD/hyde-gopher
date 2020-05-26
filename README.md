@@ -37,10 +37,14 @@ static site. (If you're using the built-in webserver this is currently being gue
 from the bind configuration which may lead to broken links. Please use the built-in
 webserver just for local tests and not for internet-facing deployments.)
 
+There are also a few things you might want to configure but don't have to.
+
 To do so, add the following line to your `site.yaml`:
 
 ```yaml
-gopher_base_url: gopher://gopher.mysite.invalid:71/~user/
+gopher_base_url: gopher://gopher.mysite.invalid:71/~user/ # needed
+gopher_layout_root: layout_gopher # this is the default
+gopher_width: 70 # this is the default
 ```
 
 ### Serve
@@ -69,7 +73,7 @@ working directory to the folder `deploy_gopher/`.
  * index pages look very meager
  * links in pages are not rendered as links
  * just HTML files and folders are considered
- * `layout_gopher` is expected to exist, but neither generated nor included here
+ * the layout folder is expected to exist, but neither generated nor included here
 
 ## Gotchas
 
