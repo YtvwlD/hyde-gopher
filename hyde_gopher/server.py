@@ -20,6 +20,7 @@ class MenuProxy:
 
 def serve(site, address, port):
     app = Flask(__name__)
+    app.config["GOPHER_WIDTH"] = site.config.gopher_width
     gopher = GopherExtension(app)
     site.config.base_path = "/"
     generator = Generator(site, gopher, MenuProxy(gopher))

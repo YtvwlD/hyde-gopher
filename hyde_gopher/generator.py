@@ -170,8 +170,8 @@ def generate_all(site):
     site.config.base_path = base_url.path
     gopher = GopherExtension()
     # fake gopher.init_app()
-    gopher.width = 70
-    gopher.formatter = gopher.formatter_class()
+    gopher.width = site.config.gopher_width
+    gopher.formatter = gopher.formatter_class(gopher.width)
     gopher_menu = GopherMenu(base_url.hostname, base_url.port or 70)
     generator = Generator(site, gopher, gopher_menu)
     stack = list()

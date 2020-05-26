@@ -88,4 +88,5 @@ class Engine(Application):
         site.config.layout_root = getattr(
             site.config, "gopher_layout_root", "layout_gopher"
         )
+        site.config.gopher_width = getattr(site.config, "gopher_width", 70)
         return site
