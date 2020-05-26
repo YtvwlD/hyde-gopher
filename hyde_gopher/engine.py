@@ -1,6 +1,7 @@
 # This file is based on Hyde's engine.py
 from pathlib import Path
 from shutil import copytree
+import sys
 from commando import (
     Application,
     command,
@@ -66,10 +67,16 @@ class Engine(Application):
                 .format(sitepath, dest_path)
             )
         self.logger.info("Copying default layout to site at %s", sitepath)
+        copy_kwargs = dict()
+        if dest_path.exists() and args.overwrite:
+            if sys.version_info < (3, 8):
+                raise HydeException("Can't overwrite layout on Python < 3.8.")
+            self.logger.warn("Overwriting %s", dest_path)
+            copy_kwargs["dirs_exist_ok"] = True
         copytree(
             Path(__file__).with_name("layout_gopher"),
             dest_path,
-            dirs_exist_ok=args.overwrite,
+            **copy_kwargs,
         )
         self.logger.info("Layout copied")
         if not hasattr(site.config, "gopher_base_url"):
