@@ -39,7 +39,7 @@ webserver just for local tests and not for internet-facing deployments.)
 
 There are also a few things you might want to configure but don't have to.
 
-To do so, add the following line to your `site.yaml`:
+To do so, add the following lines to your `site.yaml`:
 
 ```yaml
 gopher_base_url: gopher://gopher.mysite.invalid:71/~user/ # needed
@@ -47,14 +47,13 @@ gopher_layout_root: layout_gopher # this is the default
 gopher_width: 70 # this is the default
 ```
 
-If you don't want to create your layout from scratch you can use a bundled one:
-
-To do so, run `hyde-gopher init`.
+If you don't want to create your layout from scratch you can use a bundled one
+ – to do so, run `hyde-gopher init`.
 
 ### Serve
 
 You can use the built-in webserver for a quick test
- - and also for pre-viewing your site while editing it.
+ – and also for pre-viewing your site while editing it.
 
 To do so, run `hyde-gopher serve`.
 
