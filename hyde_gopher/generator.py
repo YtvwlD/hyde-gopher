@@ -43,7 +43,7 @@ class Generator:
         self.events.begin_site()
     
     def html2gopher(self, html):
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, features="html.parser")
         entries = list()
         for line in soup.text.splitlines():
             if MENU_LINE_PATTERN.match(line):
