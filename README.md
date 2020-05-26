@@ -47,6 +47,10 @@ gopher_layout_root: layout_gopher # this is the default
 gopher_width: 70 # this is the default
 ```
 
+If you don't want to create your layout from scratch you can use a bundled one:
+
+To do so, run `hyde-gopher init`.
+
 ### Serve
 
 You can use the built-in webserver for a quick test
@@ -73,7 +77,6 @@ working directory to the folder `deploy_gopher/`.
  * links in pages are not rendered as links
  * images are only linked if you use a macro to render them
  * just HTML files, binaries and folders are considered
- * the layout folder is expected to exist, you can use the provided one
 
 ## Gotchas
 

@@ -13,4 +13,5 @@ script:
   - hyde create
   - hyde gen
   - "echo 'gopher_base_url: gopher://localhost:7070/' >> site.yaml"
+  - hyde-gopher init
   - hyde-gopher gen

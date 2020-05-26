@@ -1,5 +1,6 @@
 # This file is based on Hyde's engine.py
 from pathlib import Path
+from shutil import copytree
 from commando import (
     Application,
     command,
@@ -9,6 +10,7 @@ from commando import (
     version
 )
 from commando.util import getLoggerWithConsoleHandler
+from hyde.exceptions import HydeException
 from hyde.model import Config
 from hyde.site import Site
 from . import generator, server
@@ -40,6 +42,40 @@ class Engine(Application):
         if args.raise_exceptions in (True, False):
             self.raise_exceptions = args.raise_exceptions
         return Path(args.sitepath).absolute()
+    
+    @subcommand(
+        'init', help='Initializes hyde-gopher with an exiting hyde site.'
+    )
+    @store('-c', '--config-path', default='site.yaml', dest='config',
+           help='The configuration used for the site')
+    @true('-f', '--force', default=False, dest='overwrite',
+          help='Overwrite the current site if it exists')
+    def init(self, args):
+        """
+        The init command. Initializes hyde-gopher with an exiting hyde site
+        from a bundled template at the given sitepath.
+        """
+        sitepath = self.main(args)
+        if not (sitepath / 'site.yaml').exists():
+            raise HydeException(f"Site {sitepath} is not yet initialized.")
+        site = self.make_site(sitepath, args.config, None)
+        dest_path = sitepath / site.config.layout_root
+        if dest_path.exists() and not args.overwrite:
+            raise HydeException(
+                "Site {} already has a layout at {}. Use -f to overwrite."
+                .format(sitepath, dest_path)
+            )
+        self.logger.info("Copying default layout to site at %s", sitepath)
+        copytree(
+            Path(__file__).with_name("layout_gopher"),
+            dest_path,
+            dirs_exist_ok=args.overwrite,
+        )
+        self.logger.info("Layout copied")
+        if not hasattr(site.config, "gopher_base_url"):
+            self.logger.warn(
+                "Site at %s has gopher_base_url not set", sitepath
+            )
     
     @subcommand('gen', help='Generate the site')
     @store('-c', '--config-path', default='site.yaml', dest='config',
