@@ -8,6 +8,8 @@ Serve your [Hyde](https://hyde.github.io/) site over
 
 ## Installation
 
+pandoc is needed to parse Markdown, so you'll need to have this installed.
+
 ### Release
 
 You can install the latest relase from PyPI by running

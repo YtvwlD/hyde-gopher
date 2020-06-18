@@ -81,6 +81,7 @@ setup(
         'flask-gopher',
         'hyde',  # needs hyde 0.9.0
         'commando',
+        'pypandoc',
         'beautifulsoup4'
     ],
 

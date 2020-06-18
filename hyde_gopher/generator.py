@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from flask_gopher import GopherMenu, GopherExtension
 from hyde.plugin import Plugin
 from hyde.template import Template
+import pypandoc
 from . import _version
 
 MENU_LINE_PATTERN = re.compile('^.+\t.*\t.*\t.*$')  # taken from flask-gopher
@@ -59,6 +60,14 @@ class Generator:
         return "\n".join(entries)
     
     def md2gopher(self, md):
+        # move links below the current block
+        md = pypandoc.convert_text(
+            md, "md", format="md", extra_args=[
+                "--wrap=preserve",
+                "--reference-links",
+                "--reference-location=block"
+            ]
+        )
         # TODO: do something useful here
         return self.html2gopher(md)
     
