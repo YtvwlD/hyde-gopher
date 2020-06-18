@@ -76,7 +76,7 @@ working directory to the folder `deploy_gopher/`.
 
 ## Knonwn issues / TODO
 
- * links in pages are not rendered as links
+ * links in HTML pages are not rendered as links (it works in Markdown, though)
  * images are only linked if you use a macro to render them
  * just HTML files, binaries and folders are considered
 

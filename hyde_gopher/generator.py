@@ -13,6 +13,7 @@ import pypandoc
 from . import _version
 
 MENU_LINE_PATTERN = re.compile('^.+\t.*\t.*\t.*$')  # taken from flask-gopher
+MARKDOWN_LINK_PATTEN = re.compile(r'\s*\[([^\]]*)\]: (.+)')
 
 logger = getLoggerWithConsoleHandler(__name__)
 
@@ -68,8 +69,16 @@ class Generator:
                 "--reference-location=block"
             ]
         )
-        # TODO: do something useful here
-        return self.html2gopher(md)
+        # make links into actual links
+        entries = list()
+        for line in md.splitlines():
+            match = MARKDOWN_LINK_PATTEN.match(line)
+            if match:
+                entries.append(self.gopher_menu.html(*match.groups()))
+            else:
+                entries.append(line)
+        # remove remaining HTML tags and make it a gophermap
+        return self.html2gopher("\n".join(entries))
     
     def _add_gopher_stuff_to_templates(self):
         class FakeApp:
