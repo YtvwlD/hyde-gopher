@@ -1,4 +1,5 @@
 language: python
+dist: bionic
 python:
   - "3.6"
   - "3.7"
@@ -15,3 +16,7 @@ script:
   - "echo 'gopher_base_url: gopher://localhost:7070/' >> site.yaml"
   - hyde-gopher init
   - hyde-gopher gen
+addons:
+  apt:
+    packages:
+      - pandoc
