@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 import re
+import textwrap
 from commando.util import getLoggerWithConsoleHandler
 from bs4 import BeautifulSoup
 from flask_gopher import GopherMenu, GopherExtension
@@ -50,11 +51,11 @@ class Generator:
                 # it is already a valid menu line, so just copy it
                 entries.append(line)
                 continue
-            while len(line) >= self.gopher.width:
-                entries.append(self.gopher_menu.info(line[:self.gopher.width]))
-                line = line[self.gopher.width:]
-            else:
-                entries.append(self.gopher_menu.info(line))
+            if not line.strip():
+                entries.append(self.gopher_menu.info(""))
+                continue
+            for wrapped_line in textwrap.wrap(line, width=self.gopher.width):
+                entries.append(self.gopher_menu.info(wrapped_line))
         return "\n".join(entries)
     
     def md2gopher(self, md):
