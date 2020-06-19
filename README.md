@@ -1,6 +1,6 @@
 # hyde-gopher
 
-[![Build Status](https://travis-ci.org/YtvwlD/hyde-gopher.svg?branch=master)](https://travis-ci.org/YtvwlD/hyde-gopher)
+[![Build Status](https://travis-ci.org/YtvwlD/hyde-gopher.svg?branch=main)](https://travis-ci.org/YtvwlD/hyde-gopher)
 
 Serve your [Hyde](https://hyde.github.io/) site over
 [Gopher](https://en.wikipedia.org/wiki/Gopher_(protocol)).
