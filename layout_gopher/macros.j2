@@ -19,5 +19,10 @@ Published: {{ res.meta.created.strftime('%a, %d %b %Y') }}
 {%- endmacro %}
 
 {% macro img(caption) %}
+{% if "[" in caption -%}
+{{ gopher_menu.image("Image: ", caller()) }}
+{{ caption }}
+{%- else -%}
 {{ gopher_menu.image("Image: " + caption, caller()) }}
+{%- endif %}
 {% endmacro %}
