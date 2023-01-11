@@ -14,6 +14,7 @@ from . import _version
 
 MENU_LINE_PATTERN = re.compile('^.+\t.*\t.*\t.*$')  # taken from flask-gopher
 MARKDOWN_LINK_PATTERN = re.compile(r'\s*\[([^\]]*)\]: (.+)')
+MARKDOWN_FOOTNOTE_PATTERN = re.compile(r'\s*\[\^(\d*)\]: ')
 CORRUPTED_LINE_PATTERN = re.compile(r'^(.)(.+) (.+) (.+) \d+$')
 
 logger = getLoggerWithConsoleHandler(__name__)
@@ -70,10 +71,18 @@ class Generator:
                 "--reference-location=block"
             ]
         )
-        # make links into actual links
+        # handle footnotes and make links into actual links
         # also try to repair Gopher lines corrupted by pandoc
         entries = list()
         for line in md.splitlines():
+            match = MARKDOWN_FOOTNOTE_PATTERN.match(line)
+            if match:
+                index = match.groups()[0]
+                line = re.sub(
+                    MARKDOWN_FOOTNOTE_PATTERN,
+                    f"{index}: ",
+                    line, count=1,
+                )
             match = MARKDOWN_LINK_PATTERN.match(line)
             if match:
                 entries.append(self.gopher_menu.html(*match.groups()))
