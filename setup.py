@@ -79,7 +79,7 @@ setup(
     install_requires=[
         'flask',
         'flask-gopher',
-        'hyde',  # needs hyde 0.9.0
+        'hyde >= 0.9.0',
         'commando',
         'pypandoc',
         'beautifulsoup4'
