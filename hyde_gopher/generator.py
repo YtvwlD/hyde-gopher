@@ -74,23 +74,27 @@ class Generator:
         # handle footnotes and make links into actual links
         # also try to repair Gopher lines corrupted by pandoc
         entries = list()
+        is_code_block = False
         for line in md.splitlines():
-            match = MARKDOWN_FOOTNOTE_PATTERN.match(line)
-            if match:
-                index = match.groups()[0]
-                line = re.sub(
-                    MARKDOWN_FOOTNOTE_PATTERN,
-                    f"{index}: ",
-                    line, count=1,
-                )
-            match = MARKDOWN_LINK_PATTERN.match(line)
-            if match:
-                entries.append(self.gopher_menu.html(*match.groups()))
-                continue
-            match = CORRUPTED_LINE_PATTERN.match(line)
-            if match:
-                entries.append(self.gopher_menu.entry(*match.groups()))
-                continue
+            if "```" in line:
+                is_code_block = not is_code_block
+            if not is_code_block and not line.startswith("    "):
+                match = MARKDOWN_FOOTNOTE_PATTERN.match(line)
+                if match:
+                    index = match.groups()[0]
+                    line = re.sub(
+                        MARKDOWN_FOOTNOTE_PATTERN,
+                        f"{index}: ",
+                        line, count=1,
+                    )
+                match = MARKDOWN_LINK_PATTERN.match(line)
+                if match:
+                    entries.append(self.gopher_menu.html(*match.groups()))
+                    continue
+                match = CORRUPTED_LINE_PATTERN.match(line)
+                if match:
+                    entries.append(self.gopher_menu.entry(*match.groups()))
+                    continue
             entries.append(line)
         # remove remaining HTML tags and make it a gophermap
         return self.html2gopher("\n".join(entries))
